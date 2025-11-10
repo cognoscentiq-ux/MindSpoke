@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import type { JournalPromptResponse } from '../types';
 
@@ -19,8 +18,12 @@ const responseSchema = {
             type: Type.STRING,
             description: "A short, kind sentence of encouragement that matches the tone of the prompt.",
         },
+        affirmation: {
+            type: Type.STRING,
+            description: "A short, positive affirmation related to the overall theme of self-care. Should be a brief, empowering statement.",
+        }
     },
-    required: ["prompt", "encouragement"],
+    required: ["prompt", "encouragement", "affirmation"],
 };
 
 export const generateJournalPrompt = async (mood: string, timeOfDay: string, theme: string): Promise<JournalPromptResponse> => {
@@ -28,19 +31,24 @@ export const generateJournalPrompt = async (mood: string, timeOfDay: string, the
     const systemInstruction = `You are a compassionate mental wellness coach from Kenya who creates short, thoughtful journaling prompts that encourage self-reflection and emotional balance. Your tone is gentle and emotionally intelligent.
 
     You will be given a user's mood, time of day, and an optional theme.
-    You MUST respond with a single journaling prompt and a short, kind sentence of encouragement.
+    You MUST respond with a single journaling prompt, a short sentence of encouragement, and a brief affirmation.
 
     Rules for the prompt:
     - No more than 30 words.
     - Easy to understand.
     - Inclusive of Kenyan or African context where it feels natural (e.g., mentioning community, nature like the savannah, daily life elements like chai).
+    
+    Rules for the affirmation:
+    - A brief, positive, and empowering statement.
+    - Related to the overall theme of self-care.
 
     Example 1:
     Input: mood = "stressed", time = "evening", theme = "gratitude"
     Output:
     {
         "prompt": "What small act of kindness, like sharing a cup of chai, made your day a little better today?",
-        "encouragement": "You’ve done enough for today — even small joys count."
+        "encouragement": "You’ve done enough for today — even small joys count.",
+        "affirmation": "I am worthy of peace and calm."
     }
 
     Example 2:
@@ -48,10 +56,11 @@ export const generateJournalPrompt = async (mood: string, timeOfDay: string, the
     Output:
     {
         "prompt": "What one thing, as steady as the morning sun over the plains, will you give your full attention to today?",
-        "encouragement": "Stay present — you already have the clarity you need."
+        "encouragement": "Stay present — you already have the clarity you need.",
+        "affirmation": "My focus creates my reality."
     }
     
-    Now, create a new, unique journaling prompt and encouragement pair based on the user's input.`;
+    Now, create a new, unique journaling prompt, encouragement, and affirmation based on the user's input.`;
 
     const themeText = theme.trim() ? ` and the theme is "${theme.trim()}"` : "";
     const userPrompt = `My mood is "${mood}", the time is "${timeOfDay}"${themeText}.`;
